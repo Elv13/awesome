@@ -502,18 +502,23 @@ end
 -- @param c The client to tag.
 -- @param startup Optional: don't do anything if true.
 function tag.withcurrent(c, startup)
-    if startup ~= true then
-        local tags = {}
-        for k, t in ipairs(c:tags()) do
-            if tag.getscreen(t) == c.screen then
-                table.insert(tags, t)
-            end
+    local tags = {}
+    for k, t in ipairs(c:tags()) do
+        if tag.getscreen(t) == c.screen then
+            table.insert(tags, t)
         end
-        if #tags == 0 then
-            tags = tag.selectedlist(c.screen)
-        end
-        c:tags(tags)
     end
+    if #tags == 0 then
+        local sellist = tag.selectedlist(c.screen)
+        if #sellist > 0 then --Use already selected tag
+            tags = sellist
+        else --Select a tag
+            local seltag = tag.gettags(c.screen)[1]
+            tag.viewonly(seltag)
+            tags={seltag}
+        end
+    end
+    c:tags(tags)
 end
 
 local function attached_connect_signal_screen(screen, sig, func)
@@ -550,10 +555,9 @@ capi.client.connect_signal("manage", function(c, startup)
             c.screen = capi.mouse.screen
         end
     end
+    tag.withcurrent(c, startup)
     c:connect_signal("property::screen", tag.withcurrent)
 end)
-
-capi.client.connect_signal("manage", tag.withcurrent)
 
 capi.tag.add_signal("property::hide")
 capi.tag.add_signal("property::icon")
