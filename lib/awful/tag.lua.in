@@ -269,7 +269,11 @@ end
 -- @param t tag object
 -- @param s Screen number
 function tag.setscreen(t, s)
+    awful.tag.history.restore(tag.screen,1)
     tag.setproperty(t, "screen", s)
+    for k,c in ipairs(tag:clients()) do
+        c.screen = screen or 1 --Move all clients
+    end
 end
 
 --- Get a tag's screen
