@@ -239,13 +239,13 @@ function drawable.new(d, widget_arg)
     ret._widgets_under_mouse = {}
 
     local function button_signal(name)
-        d:connect_signal(name, function(d, x, y, ...)
+        d:connect_signal(name, function(d, x, y, button, modifiers)
             local widgets = ret:find_widgets(x, y)
             for k, v in pairs(widgets) do
                 -- Calculate x/y inside of the widget
                 local lx = x - v.x
                 local ly = y - v.y
-                v.widget:emit_signal(name, lx, ly, ...)
+                v.widget:emit_signal(name, lx, ly, button, modifiers,v)
             end
         end)
     end
