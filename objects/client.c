@@ -1785,7 +1785,7 @@ static int
 luaA_client_get_content(lua_State *L, client_t *c)
 {
     xcb_image_t *ximage = xcb_image_get(globalconf.connection,
-                                        c->window,
+                                        c->frame_window,
                                         0, 0,
                                         c->geometry.width,
                                         c->geometry.height,
