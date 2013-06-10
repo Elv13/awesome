@@ -154,7 +154,7 @@ end
 --- Move a client.
 -- @param c The client to move, or the focused one if nil.
 -- @param snap The pixel to snap clients.
-function mouse.client.move(c, snap)
+function mouse.client.move(c, snap, callback)
     local c = c or capi.client.focus
 
     if not c
@@ -206,6 +206,9 @@ function mouse.client.move(c, snap)
                                       end
                                       return true
                                   end
+                              end
+                              if type(callback) == "function" then
+                                callback(c)
                               end
                               return false
                           end, "fleur")
@@ -361,7 +364,7 @@ function mouse.client.corner(c, corner)
     return corner, x, y
 end
 
-local function client_resize_magnifier(c, corner)
+local function client_resize_magnifier(c, corner, callback)
     local corner, x, y = mouse.client.corner(c, corner)
     capi.mouse.coords({ x = x, y = y })
 
@@ -383,11 +386,14 @@ local function client_resize_magnifier(c, corner)
                                       return true
                                   end
                               end
+                              if type(callback) == "function" then
+                                callback(c)
+                              end
                               return false
                           end, corner .. "_corner")
 end
 
-local function client_resize_tiled(c, lay)
+local function client_resize_tiled(c, lay, callback)
     local wa = capi.screen[c.screen].workarea
     local mwfact = tag.getmwfact()
     local cursor
@@ -477,11 +483,14 @@ local function client_resize_tiled(c, lay)
                                       return true
                                   end
                               end
+                              if type(callback) == "function" then
+                                callback(c)
+                              end
                               return false
                           end, cursor)
 end
 
-local function client_resize_floating(c, corner, fixed_x, fixed_y)
+local function client_resize_floating(c, corner, fixed_x, fixed_y, callback)
     local corner, x, y = mouse.client.corner(c, corner)
     local g = c:geometry()
 
@@ -534,14 +543,17 @@ local function client_resize_floating(c, corner, fixed_x, fixed_y)
                                       return true
                                   end
                               end
+                              if type(callback) == "function" then
+                                callback(c)
+                              end
                               return false
                           end, corner .. "_corner")
 end
 
 --- Resize a client.
 -- @param c The client to resize, or the focused one by default.
--- @param corner The corner to grab on resize. Auto detected by default.
-function mouse.client.resize(c, corner)
+-- @param corner The corner to grab on resize (Ex: "top_left"). Auto detected by default.
+function mouse.client.resize(c, corner,callback)
     local c = c or capi.client.focus
 
     if not c then return end
@@ -560,15 +572,15 @@ function mouse.client.resize(c, corner)
     local lay = layout.get(c.screen)
 
     if lay == layout.suit.floating or aclient.floating.get(c) then
-        return client_resize_floating(c, corner, fixed_x, fixed_y)
+        return client_resize_floating(c, corner, fixed_x, fixed_y, callback)
     elseif lay == layout.suit.tile
         or lay == layout.suit.tile.left
         or lay == layout.suit.tile.top
         or lay == layout.suit.tile.bottom
         then
-        return client_resize_tiled(c, lay)
+        return client_resize_tiled(c, lay, callback)
     elseif lay == layout.suit.magnifier then
-        return client_resize_magnifier(c, corner)
+        return client_resize_magnifier(c, corner, callback)
     end
 end
 
