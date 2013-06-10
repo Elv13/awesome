@@ -8,6 +8,7 @@ module("screen")
 -- @field geometry The screen coordinates. Immutable.
 -- @field workarea The screen workarea.
 -- @field index The screen number.
+-- @field outputs The screen physical height and width (when available). Immutable.
 -- @class table
 -- @name screen
 
