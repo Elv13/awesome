@@ -273,6 +273,7 @@ function client.focus.bydirection(dir, c)
         -- If we found a client to focus, then do it.
         if target then
             capi.client.focus = cltbl[target]
+            capi.client.focus:raise()
         end
     end
 end
@@ -304,6 +305,7 @@ function client.focus.global_bydirection(dir, c)
 
             if target then
                 capi.client.focus = cltbl[target]
+                capi.client.focus:raise()
             end
         end
     end
