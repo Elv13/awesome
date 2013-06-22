@@ -124,6 +124,7 @@ struct client_t
         /** The drawable for this bar. */
         drawable_t *drawable;
     } titlebar[CLIENT_TITLEBAR_COUNT];
+    char *startup_id;
 };
 
 ARRAY_FUNCS(client_t *, client, DO_NOTHING)

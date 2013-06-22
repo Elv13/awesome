@@ -440,6 +440,9 @@ client_manage(xcb_window_t w, xcb_get_geometry_reply_t *wgeom, bool startup)
     client_t *c = client_new(globalconf.L);
     xcb_screen_t *s = globalconf.screen;
 
+    /*Protect the sn id*/
+    c->startup_id = NULL;
+
     /* consider the window banned */
     c->isbanned = true;
     /* Store window */
@@ -570,9 +573,9 @@ HANDLE_GEOM(height)
             xcb_get_property_reply(globalconf.connection, startup_id_q, NULL);
         /* Say spawn that a client has been started, with startup id as argument */
         char *startup_id = xutil_get_text_property_from_reply(reply);
+        c->startup_id = startup_id;
         p_delete(&reply);
         spawn_start_notify(c, startup_id);
-        p_delete(&startup_id);
     }
 
     luaA_class_emit_signal(globalconf.L, &client_class, "list", 0);
@@ -1780,6 +1783,7 @@ LUA_OBJECT_EXPORT_PROPERTY(client, client_t, sticky, lua_pushboolean)
 LUA_OBJECT_EXPORT_PROPERTY(client, client_t, size_hints_honor, lua_pushboolean)
 LUA_OBJECT_EXPORT_PROPERTY(client, client_t, maximized_horizontal, lua_pushboolean)
 LUA_OBJECT_EXPORT_PROPERTY(client, client_t, maximized_vertical, lua_pushboolean)
+LUA_OBJECT_EXPORT_PROPERTY(client, client_t, startup_id, lua_pushstring)
 
 static int
 luaA_client_get_content(lua_State *L, client_t *c)
@@ -2237,6 +2241,10 @@ client_class_setup(lua_State *L)
                             (lua_class_propfunc_t) luaA_client_set_shape_clip,
                             NULL,
                             (lua_class_propfunc_t) luaA_client_set_shape_clip);
+    luaA_class_add_property(&client_class, "startup_id",
+                            NULL,
+                            (lua_class_propfunc_t) luaA_client_get_startup_id,
+                            NULL);
 
     signal_add(&client_class.signals, "focus");
     signal_add(&client_class.signals, "list");

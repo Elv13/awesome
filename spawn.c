@@ -367,8 +367,11 @@ luaA_spawn(lua_State *L)
 
     /* push pid on stack */
     lua_pushnumber(L, pid);
+    /* push sn on stack */
+    if (context)
+        lua_pushstring(L,sn_launcher_context_get_startup_id(context));
 
-    return 1;
+    return (context)?2:1;
 }
 
 // vim: filetype=c:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80

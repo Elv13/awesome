@@ -16,6 +16,7 @@ module("client")
 -- @field icon_name The client name when iconified.
 -- @field icon The client icon.
 -- @field screen Client screen.
+-- @field startup_id The FreeDesktop StartId.
 -- @field hidden Define if the client must be hidden, i.e. never mapped,
 -- invisible in taskbar.
 -- @field minimized Define it the client must be iconify, i.e. only visible in
